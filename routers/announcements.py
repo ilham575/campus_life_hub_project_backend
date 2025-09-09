@@ -1,50 +1,54 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import List
-from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from database import SessionLocal
+from models.announcement import Announcement
+from schemas.announcement import AnnouncementCreate, AnnouncementResponse
 
 router = APIRouter()
 
-# Announcement model
-class Announcement(BaseModel):
-    id: int
-    title: str
-    content: str
-    category: str
-    created_at: datetime
-    created_by: int
+# เพิ่ม prefix สำหรับ router
+router = APIRouter(prefix="/announcements")
 
-# In-memory database
-announcements = []
+# Dependency to get the database session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-@router.post("/announcements/", response_model=Announcement)
-def create_announcement(announcement: Announcement):
-    announcements.append(announcement)
-    return announcement
+# Create an announcement
+@router.post("/", response_model=AnnouncementResponse)
+def create_announcement(announcement: AnnouncementCreate, db: Session = Depends(get_db)):
+    db_announcement = Announcement(**announcement.dict())
+    db.add(db_announcement)
+    db.commit()
+    db.refresh(db_announcement)
+    return db_announcement
 
-@router.get("/announcements/", response_model=List[Announcement])
-def get_announcements():
-    return announcements
+# Get all announcements
+@router.get("/", response_model=list[AnnouncementResponse])
+def read_announcements(db: Session = Depends(get_db)):
+    return db.query(Announcement).all()
 
-@router.get("/announcements/{announcement_id}", response_model=Announcement)
-def get_announcement(announcement_id: int):
-    for announcement in announcements:
-        if announcement.id == announcement_id:
-            return announcement
-    raise HTTPException(status_code=404, detail="Announcement not found")
+# Update an announcement
+@router.put("/{announcement_id}", response_model=AnnouncementResponse)
+def update_announcement(announcement_id: int, announcement: AnnouncementCreate, db: Session = Depends(get_db)):
+    db_announcement = db.query(Announcement).filter(Announcement.id == announcement_id).first()
+    if not db_announcement:
+        raise HTTPException(status_code=404, detail="Announcement not found")
+    for key, value in announcement.dict().items():
+        setattr(db_announcement, key, value)
+    db.commit()
+    db.refresh(db_announcement)
+    return db_announcement
 
-@router.put("/announcements/{announcement_id}", response_model=Announcement)
-def update_announcement(announcement_id: int, updated_announcement: Announcement):
-    for index, announcement in enumerate(announcements):
-        if announcement.id == announcement_id:
-            announcements[index] = updated_announcement
-            return updated_announcement
-    raise HTTPException(status_code=404, detail="Announcement not found")
-
-@router.delete("/announcements/{announcement_id}", response_model=dict)
-def delete_announcement(announcement_id: int):
-    for index, announcement in enumerate(announcements):
-        if announcement.id == announcement_id:
-            del announcements[index]
-            return {"message": "Announcement deleted successfully"}
-    raise HTTPException(status_code=404, detail="Announcement not found")
+# Delete an announcement
+@router.delete("/{announcement_id}")
+def delete_announcement(announcement_id: int, db: Session = Depends(get_db)):
+    db_announcement = db.query(Announcement).filter(Announcement.id == announcement_id).first()
+    if not db_announcement:
+        raise HTTPException(status_code=404, detail="Announcement not found")
+    db.delete(db_announcement)
+    db.commit()
+    return {"message": "Announcement deleted"}
