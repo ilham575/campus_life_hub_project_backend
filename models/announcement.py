@@ -15,3 +15,4 @@ class Announcement(Base):
 
     # Relationship with users table (if needed)
     creator = relationship("User", back_populates="announcements")
+    bookmarks = relationship("Bookmark", back_populates="announcement", cascade="all, delete-orphan")
