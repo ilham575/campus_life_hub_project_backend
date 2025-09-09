@@ -1,21 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database import SessionLocal
+from database import get_db  # Import get_db from database.py
 from models.announcement import Announcement
 from schemas.announcement import AnnouncementCreate, AnnouncementResponse
 
-router = APIRouter()
-
-# เพิ่ม prefix สำหรับ router
 router = APIRouter(prefix="/announcements")
-
-# Dependency to get the database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Create an announcement
 @router.post("/", response_model=AnnouncementResponse)

@@ -1,19 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database import SessionLocal
+from database import get_db  # Import get_db from database.py
 from models.bookmark import Bookmark
-from models.announcement import Announcement  # Import the Announcement model
+from models.announcement import Announcement
 from schemas.bookmark import BookmarkCreate, BookmarkResponse
 
 router = APIRouter(prefix="/bookmarks", tags=["Bookmarks"])
-
-# Dependency to get the database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Create a bookmark
 @router.post("/", response_model=BookmarkResponse)
