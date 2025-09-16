@@ -1,18 +1,18 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional, List, Dict
 
 class AnnouncementBase(BaseModel):
     title: str
-    content: str
     category: str
+    source: str | None = None
+    detail: str | None = None
 
 class AnnouncementCreate(AnnouncementBase):
-    created_by: int
+    pass
 
-class AnnouncementResponse(AnnouncementBase):
+class Announcement(AnnouncementBase):
     id: int
-    created_at: datetime
-    created_by: int
 
     class Config:
         orm_mode = True
