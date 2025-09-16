@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database import get_db  # Import get_db from database.py
 from models.announcement import Announcement as AnnouncementModel
 from schemas.announcement import AnnouncementCreate, Announcement
-from datetime import datetime
+# from datetime import datetime
 from typing import List
 
 router = APIRouter(prefix="/announcements")
