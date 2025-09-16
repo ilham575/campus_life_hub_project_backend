@@ -8,9 +8,12 @@ from typing import List
 
 router = APIRouter(prefix="/bookmarks", tags=["Bookmarks"])
 
-# Create a bookmark
+# Create a bookmark - ไม่ต้อง authenticate
 @router.post("/", response_model=Bookmark)
-def create_bookmark(bookmark: BookmarkCreate, db: Session = Depends(get_db)):
+def create_bookmark(
+    bookmark: BookmarkCreate, 
+    db: Session = Depends(get_db)
+):
     # Check if the announcement exists
     announcement = db.query(Announcement).filter(Announcement.id == bookmark.announcement_id).first()
     if not announcement:
@@ -30,16 +33,39 @@ def create_bookmark(bookmark: BookmarkCreate, db: Session = Depends(get_db)):
     db.refresh(db_bookmark)
     return db_bookmark
 
-# Delete a bookmark
+# Get bookmarks by user_id - ไม่ต้อง authenticate
+@router.get("/", response_model=List[Bookmark])
+def get_bookmarks(
+    user_id: str,
+    db: Session = Depends(get_db)
+):
+    return db.query(BookmarkModel).filter(BookmarkModel.user_id == user_id).all()
+
+# Delete a bookmark - ไม่ต้อง authenticate
 @router.delete("/{bookmark_id}")
-def delete_bookmark(bookmark_id: int, db: Session = Depends(get_db)):
+def delete_bookmark(
+    bookmark_id: int, 
+    db: Session = Depends(get_db)
+):
     db_bookmark = db.query(BookmarkModel).filter(BookmarkModel.id == bookmark_id).first()
-    if db_bookmark:
-        db.delete(db_bookmark)
-        db.commit()
+    if not db_bookmark:
+        raise HTTPException(status_code=404, detail="Bookmark not found")
+    
+    db.delete(db_bookmark)
+    db.commit()
     return {"ok": True}
 
-# Get all bookmarks - เปลี่ยน user_id เป็น str
-@router.get("/", response_model=List[Bookmark])
-def get_bookmarks(user_id: str, db: Session = Depends(get_db)):
-    return db.query(BookmarkModel).filter(BookmarkModel.user_id == user_id).all()
+# เพิ่ม endpoint สำหรับหา bookmark ด้วย user_id และ announcement_id
+@router.get("/find")
+def find_bookmark(
+    user_id: str,
+    announcement_id: int,
+    db: Session = Depends(get_db)
+):
+    bookmark = db.query(BookmarkModel).filter(
+        BookmarkModel.user_id == user_id,
+        BookmarkModel.announcement_id == announcement_id
+    ).first()
+    if bookmark:
+        return bookmark
+    return None
