@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from datetime import datetime
-from typing import Optional, List, Dict
+# from datetime import datetime
+# from typing import Optional, List, Dict
 
 class AnnouncementBase(BaseModel):
     title: str
@@ -15,4 +15,4 @@ class Announcement(AnnouncementBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -1,25 +1,39 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
-from routers.announcements import router as announcements_router
-from routers.bookmarks import router as bookmarks_router
-from routers.auth import router as auth_router
-
-# Import models เพื่อให้ Base รู้จัก tables
-# from models.announcement import Announcement
-# from models.bookmark import Bookmark
-# from models.user import User
+from routers import auth, announcements, bookmarks
 
 # สร้าง tables ทั้งหมด
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Campus Life Hub API")
+app = FastAPI(title="Campus Life Hub API", version="2.0.0")
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ในการใช้งานจริงควรจำกัด origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Include routers
-app.include_router(announcements_router, tags=["Announcements"])
-app.include_router(bookmarks_router)
-app.include_router(auth_router)
+app.include_router(auth.router, prefix="/auth", tags=["authentication"])
+app.include_router(announcements.router, prefix="/announcements", tags=["announcements"])
+app.include_router(bookmarks.router, prefix="/bookmarks", tags=["bookmarks"])
 
 
 @app.get("/")
-async def root():
-    return {"message": "Campus Life Hub API"}
+def read_root():
+    return {"message": "Campus Life Hub API v2.0 - Firebase Free!"}
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "version": "2.0.0"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
