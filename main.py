@@ -19,7 +19,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth.router, prefix="/auth", tags=["authentication"])
-app.include_router(announcements.router, prefix="/announcements", tags=["announcements"])
+app.include_router(announcements.router, tags=["announcements"])
 app.include_router(bookmarks.router, prefix="/bookmarks", tags=["bookmarks"])
 
 

@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List
 
 from database import get_db
 from models.bookmark import Bookmark
@@ -12,17 +12,11 @@ router = APIRouter()
 
 @router.get("/", response_model=List[BookmarkResponse])
 def get_bookmarks(
-    announcement_id: Optional[int] = Query(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """ดึง bookmarks ของ user ปัจจุบัน"""
-    query = db.query(Bookmark).filter(Bookmark.user_id == current_user.id)
-    
-    if announcement_id:
-        query = query.filter(Bookmark.announcement_id == announcement_id)
-    
-    return query.all()
+    """ดึง bookmarks ทั้งหมดของ user ปัจจุบัน"""
+    return db.query(Bookmark).filter(Bookmark.user_id == current_user.id).all()
 
 @router.post("/", response_model=BookmarkResponse)
 def create_bookmark(
@@ -50,25 +44,6 @@ def create_bookmark(
     db.refresh(db_bookmark)
     return db_bookmark
 
-@router.delete("/{bookmark_id}")
-def delete_bookmark(
-    bookmark_id: int,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """ลบ bookmark โดย ID"""
-    bookmark = db.query(Bookmark).filter(
-        Bookmark.id == bookmark_id,
-        Bookmark.user_id == current_user.id  # ตรวจสอบว่าเป็นของ user คนนี้
-    ).first()
-    
-    if not bookmark:
-        raise HTTPException(status_code=404, detail="Bookmark not found")
-    
-    db.delete(bookmark)
-    db.commit()
-    return {"message": "Bookmark deleted successfully"}
-
 @router.delete("/by-announcement/{announcement_id}")
 def delete_bookmark_by_announcement(
     announcement_id: int,
@@ -87,17 +62,3 @@ def delete_bookmark_by_announcement(
     db.delete(bookmark)
     db.commit()
     return {"message": "Bookmark deleted successfully"}
-
-@router.get("/check/{announcement_id}")
-def check_bookmark(
-    announcement_id: int,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """ตรวจสอบว่า user bookmark announcement นี้หรือไม่"""
-    bookmark = db.query(Bookmark).filter(
-        Bookmark.user_id == current_user.id,
-        Bookmark.announcement_id == announcement_id
-    ).first()
-    
-    return {"is_bookmarked": bookmark is not None}
