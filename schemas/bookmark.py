@@ -1,14 +1,14 @@
 from pydantic import BaseModel
+from datetime import datetime
 
-class BookmarkBase(BaseModel):
-    user_id: str  # เปลี่ยนจาก int เป็น str
+class BookmarkCreate(BaseModel):
     announcement_id: int
 
-class BookmarkCreate(BookmarkBase):
-    pass
-
-class Bookmark(BookmarkBase):
+class BookmarkResponse(BaseModel):
     id: int
-
+    user_id: int
+    announcement_id: int
+    created_at: datetime
+    
     class Config:
-        orm_mode = True
+        from_attributes = True

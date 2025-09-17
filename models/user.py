@@ -1,10 +1,19 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
+from datetime import datetime
 from database import Base
 
 class User(Base):
     __tablename__ = "users"
-
+    
     id = Column(Integer, primary_key=True, index=True)
-    firebase_uid = Column(String, unique=True, nullable=True)
     username = Column(String, unique=True, index=True)
-    hashed_password = Column(String, nullable=False)  # เพิ่ม field นี้
+    hashed_password = Column(String)
+    name = Column(String, nullable=True)
+    student_id = Column(String, unique=True, index=True, nullable=True)
+    faculty = Column(String, nullable=True)
+    year = Column(Integer, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationship
+    bookmarks = relationship("Bookmark", back_populates="user", cascade="all, delete-orphan")
