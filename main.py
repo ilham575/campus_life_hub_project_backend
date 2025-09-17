@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 from routers import auth, announcements, bookmarks
+from routers.timetable import router as timetable_router
+from models import timetable
 
 # สร้าง tables ทั้งหมด
 Base.metadata.create_all(bind=engine)
@@ -21,7 +23,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/auth", tags=["authentication"])
 app.include_router(announcements.router, tags=["announcements"])
 app.include_router(bookmarks.router, prefix="/bookmarks", tags=["bookmarks"])
-
+app.include_router(timetable_router, tags=["Timetable"])
 
 @app.get("/")
 def read_root():
