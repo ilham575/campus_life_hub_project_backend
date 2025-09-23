@@ -9,6 +9,7 @@ class UserCreate(BaseModel):
     student_id: Optional[str] = None
     faculty: Optional[str] = None
     year: Optional[int] = None
+    role: str = "user"  # default role is "user"
 
 class UserResponse(BaseModel):
     id: int
@@ -18,6 +19,7 @@ class UserResponse(BaseModel):
     faculty: Optional[str] = None
     year: Optional[int] = None
     created_at: datetime
+    role: str
     
     class Config:
         from_attributes = True
@@ -35,3 +37,6 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+class RoleUpdate(BaseModel):
+    role: str  # e.g., "user", "admin"

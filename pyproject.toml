@@ -1,49 +1,26 @@
-[project]
-name = "backend"
-version = "0.1.0"
-description = ""
-authors = [
-    {name = "อิลฮัม หะยีดอเล๊าะ",email = "ihsaniah112@gmail.com"}
-]
-readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "fastapi (>=0.116.1,<0.117.0)",
-    "uvicorn (>=0.35.0,<0.36.0)",
-    "sqlalchemy (>=2.0.43,<3.0.0)",
-    "aiosqlite (>=0.21.0,<0.22.0)",
-    "psycopg2 (>=2.9.10,<3.0.0)",
-    "pytest (>=8.4.2,<9.0.0)",
-    "python-jose[cryptography] (>=3.5.0,<4.0.0)",
-    "passlib[bcrypt] (>=1.7.4,<2.0.0)",
-    "python-multipart (>=0.0.20,<0.0.21)",
-    "email-validator (>=2.3.0,<3.0.0)",
-    "pydantic[email] (>=2.11.9,<3.0.0)"
-]
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
 [tool.poetry]
 name = "campus-life-hub-backend"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
-readme = "README.md"
+description = "Campus Life Hub Backend"
+authors = ["อิลฮัม หะยีดอเล๊าะ <ihsaniah112@gmail.com>"]
+
 
 [tool.poetry.dependencies]
 python = "^3.13"
-fastapi = "^0.116.1"
-uvicorn = {extras = ["standard"], version = "^0.35.0"}
+fastapi = "^0.117.1"
+uvicorn = {extras = ["standard"], version = "^0.36.0"}
 sqlalchemy = "^2.0.43"
 aiosqlite = "^0.21.0"
 psycopg2 = "^2.9.10"
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+python-jose = {extras = ["cryptography"], version = "^3.5.0"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-pydantic = "^2.0.0"
+pydantic = {extras = ["email"], version = "^2.11.9"}
+python-multipart = "^0.0.20"
+email-validator = "^2.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.2"
 
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

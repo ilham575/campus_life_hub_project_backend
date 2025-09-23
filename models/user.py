@@ -14,6 +14,7 @@ class User(Base):
     faculty = Column(String, nullable=True)
     year = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    role = Column(String, default="user")
     
     # Relationship
     bookmarks = relationship("Bookmark", back_populates="user", cascade="all, delete-orphan")
