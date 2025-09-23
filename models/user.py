@@ -17,3 +17,4 @@ class User(Base):
     
     # Relationship
     bookmarks = relationship("Bookmark", back_populates="user", cascade="all, delete-orphan")
+    announcements = relationship("Announcement", back_populates="created_by")
