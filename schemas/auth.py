@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 class UserCreate(BaseModel):
@@ -9,7 +9,7 @@ class UserCreate(BaseModel):
     student_id: Optional[str] = None
     faculty: Optional[str] = None
     year: Optional[int] = None
-    role: str = "user"  # default role is "user"
+    roles: Optional[List[str]] = ['user']
 
 class UserResponse(BaseModel):
     id: int
@@ -19,7 +19,7 @@ class UserResponse(BaseModel):
     faculty: Optional[str] = None
     year: Optional[int] = None
     created_at: datetime
-    role: str
+    roles: List[str]
     
     class Config:
         from_attributes = True
@@ -39,4 +39,4 @@ class TokenData(BaseModel):
     username: Optional[str] = None
 
 class RoleUpdate(BaseModel):
-    role: str  # e.g., "user", "admin"
+    roles: List[str]  # e.g., "user", "admin"

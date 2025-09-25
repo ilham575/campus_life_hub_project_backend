@@ -14,6 +14,8 @@ from database import get_db
 from models.user import User
 from schemas.auth import TokenData
 
+from models.user import User, Role
+
 # Config
 SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-this-in-production")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
@@ -85,7 +87,20 @@ def get_current_active_user(current_user: User = Depends(get_current_user)):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid user")
     return current_user
 
+def get_or_create_roles(db: Session, role_names: list[str]):
+    roles = []
+    for name in role_names:
+        role = db.query(Role).filter_by(name=name).first()
+        if not role:
+            role = Role(name=name)
+            db.add(role)
+            db.commit()
+            db.refresh(role)
+        roles.append(role)
+    return roles
+
 def require_admin(current_user: User = Depends(get_current_user)):
-    if current_user.role != "admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+    role_names = [role.name for role in current_user.roles]
+    if "admin" not in role_names:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
     return current_user
