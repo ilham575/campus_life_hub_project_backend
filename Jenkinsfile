@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/username/repo.git'
+                git 'https://github.com/ilham575/campus_life_hub_project_backend.git'
             }
         }
         stage('Build') {
