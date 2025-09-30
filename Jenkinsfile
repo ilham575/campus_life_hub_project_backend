@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'docker:24.0.7-dind'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
     environment {
         POSTGRESQL_DATABASE_URL = credentials('POSTGRESQL_DATABASE_URL')
     }
