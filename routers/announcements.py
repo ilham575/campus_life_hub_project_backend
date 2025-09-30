@@ -4,7 +4,7 @@ from database import get_db
 from models.announcement import Announcement as AnnouncementModel
 from models.user import User as UserModel
 from schemas.announcement import AnnouncementCreate, Announcement
-from auth import get_current_user  # Import authentication function
+from services.auth_service import get_current_user  # Import authentication function
 from typing import List
 
 router = APIRouter(prefix="/announcements")
