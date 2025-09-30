@@ -1,12 +1,12 @@
 pipeline {
     agent any
     environment {
-        POSTGRESQL_DATABASE_URL = credentials('POSTGRESQL_DATABASE_URL') 
+        POSTGRESQL_DATABASE_URL = credentials('POSTGRESQL_DATABASE_URL')
     }
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/ilham575/campus_life_hub_project_backend.git'
+                checkout scm   // ใช้ของ declarative pipeline
             }
         }
         stage('Build') {
