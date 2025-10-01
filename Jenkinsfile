@@ -1,8 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'docker:24.0.7-dind'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
+            image 'docker/compose:1.29.2'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
         }
     }
     environment {
