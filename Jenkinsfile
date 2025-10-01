@@ -16,12 +16,12 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'docker compose build'
+                sh 'docker-compose -f backend/docker-compose.yml build'
             }
         }
         stage('Run') {
             steps {
-                sh 'docker compose up -d'
+                sh 'docker-compose -f backend/docker-compose.yml up -d'
             }
         }
     }
