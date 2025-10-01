@@ -6,6 +6,7 @@ pipeline {
         }
     }
     environment {
+        POSTGRES_PASSWORD = credentials('POSTGRES_PASSWORD')
         POSTGRESQL_DATABASE_URL = credentials('POSTGRESQL_DATABASE_URL')
     }
     stages {
