@@ -161,9 +161,9 @@ def get_user_by_id(user_id: int,
 # ------------------------
 @router.put("/me", response_model=UserResponse)
 def update_current_user_profile(
-    user_update: UserUpdate = Body(...),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    user_update: UserUpdate = Body(...),
 ):
     # อัพเดตเฉพาะ field ที่ไม่เป็น None
     if user_update.name is not None:
