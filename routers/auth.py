@@ -3,7 +3,7 @@
 from datetime import timedelta
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -153,4 +153,38 @@ def get_user_by_id(user_id: int,
         year=user.year,
         created_at=user.created_at,
         roles=[role.name for role in user.roles]
+    )
+
+
+# ------------------------
+# Update current user profile
+# ------------------------
+@router.put("/me", response_model=UserResponse)
+def update_current_user_profile(
+    user_update: UserUpdate = Body(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # อัพเดตเฉพาะ field ที่ไม่เป็น None
+    if user_update.name is not None:
+        current_user.name = user_update.name
+    if user_update.student_id is not None:
+        current_user.student_id = user_update.student_id
+    if user_update.faculty is not None:
+        current_user.faculty = user_update.faculty
+    if user_update.year is not None:
+        current_user.year = user_update.year
+
+    db.commit()
+    db.refresh(current_user)
+
+    return UserResponse(
+        id=current_user.id,
+        username=current_user.username,
+        name=current_user.name,
+        student_id=current_user.student_id,
+        faculty=current_user.faculty,
+        year=current_user.year,
+        created_at=current_user.created_at,
+        roles=[role.name for role in current_user.roles]
     )
