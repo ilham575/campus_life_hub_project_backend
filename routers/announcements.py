@@ -31,6 +31,14 @@ def create_announcement(
 def get_announcements(db: Session = Depends(get_db)):
     return db.query(AnnouncementModel).options(joinedload(AnnouncementModel.created_by)).all()
 
+# Get a single announcement
+@router.get("/{announcement_id}", response_model=Announcement)
+def get_announcement(announcement_id: int, db: Session = Depends(get_db)):
+    announcement = db.query(AnnouncementModel).options(joinedload(AnnouncementModel.created_by)).filter(AnnouncementModel.id == announcement_id).first()
+    if not announcement:
+        raise HTTPException(status_code=404, detail="Announcement not found")
+    return announcement
+
 # Update an announcement
 @router.put("/{announcement_id}", response_model=Announcement)
 def update_announcement(
