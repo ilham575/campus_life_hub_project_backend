@@ -9,7 +9,7 @@ class EventBase(BaseModel):
     end_time: datetime
 
 class EventCreate(EventBase):
-    user_id: str
+    user_id: int
 
 class Event(EventBase):
     id: int

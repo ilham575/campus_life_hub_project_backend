@@ -10,7 +10,7 @@ router = APIRouter()
 
 EVENT_NOT_FOUND = "Event not found"
 
-@router.post("/events/", response_model=Event)
+@router.post("/", response_model=Event)
 def create_event(event: EventCreate, db: Session = Depends(get_db)):
     # เช็ค user_id ว่ามีจริงในตาราง User (ถ้าไม่ต้องการเช็ค สามารถลบบรรทัดนี้ได้)
     user = db.query(User).filter(User.id == event.user_id).first()
@@ -28,7 +28,7 @@ def create_event(event: EventCreate, db: Session = Depends(get_db)):
     db.refresh(db_event)
     return db_event
 
-@router.get("/events/", response_model=List[Event])
+@router.get("/", response_model=List[Event])
 def read_events(
     user_id: str = Query(..., description="User ID"),
     skip: int = 0,
@@ -37,14 +37,14 @@ def read_events(
 ):
     return db.query(EventModel).filter(EventModel.user_id == user_id).offset(skip).limit(limit).all()
 
-@router.get("/events/{event_id}", response_model=Event)
+@router.get("/{event_id}", response_model=Event)
 def read_event(event_id: int, user_id: str, db: Session = Depends(get_db)):
     event = db.query(EventModel).filter(EventModel.id == event_id, EventModel.user_id == user_id).first()
     if event is None:
         raise HTTPException(status_code=404, detail=EVENT_NOT_FOUND)
     return event
 
-@router.put("/events/{event_id}", response_model=Event)
+@router.put("/{event_id}", response_model=Event)
 def update_event(event_id: int, event: EventCreate, db: Session = Depends(get_db)):
     db_event = db.query(EventModel).filter(EventModel.id == event_id, EventModel.user_id == event.user_id).first()
     if db_event is None:
@@ -57,7 +57,7 @@ def update_event(event_id: int, event: EventCreate, db: Session = Depends(get_db
     db.refresh(db_event)
     return db_event
 
-@router.delete("/events/{event_id}")
+@router.delete("/{event_id}")
 def delete_event(event_id: int, user_id: str, db: Session = Depends(get_db)):
     db_event = db.query(EventModel).filter(EventModel.id == event_id, EventModel.user_id == user_id).first()
     if db_event is None:

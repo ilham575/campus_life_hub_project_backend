@@ -26,7 +26,7 @@ app.include_router(announcements.router, tags=["announcements"])
 app.include_router(bookmarks.router, prefix="/bookmarks", tags=["bookmarks"])
 app.include_router(subjects_router, tags=["Subjects"])
 app.include_router(location.router)
-app.include_router(events.router, tags=["events"])
+app.include_router(events.router, prefix="/events", tags=["events"])
 
 
 @app.get("/")
