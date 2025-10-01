@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: campus_recruitment
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d campus_recruitment"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  web:
+    build: .
+    depends_on:
+      - db
+    environment:
+      POSTGRESQL_DATABASE_URL: ${POSTGRESQL_DATABASE_URL}
+    ports:
+      - "8000:8000"
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  db-data:

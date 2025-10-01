@@ -4,6 +4,7 @@ from database import engine, Base
 from routers import auth, announcements, bookmarks
 from routers.subjects import router as subjects_router
 from routers import location
+from routers import events
 
 # สร้าง tables ทั้งหมด
 Base.metadata.create_all(bind=engine)
@@ -25,6 +26,7 @@ app.include_router(announcements.router, tags=["announcements"])
 app.include_router(bookmarks.router, prefix="/bookmarks", tags=["bookmarks"])
 app.include_router(subjects_router, tags=["Subjects"])
 app.include_router(location.router)
+app.include_router(events.router, tags=["events"])
 
 
 @app.get("/")
