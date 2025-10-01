@@ -39,7 +39,7 @@ def override_get_current_user():
     return User(
         id=1,
         username="testuser",
-        hashed_password="fakehashedpw",
+        hashed_password="test_value",  # เปลี่ยนชื่อค่า
         name="Test User",
         student_id="6510110575",
         faculty="Engineering",
@@ -64,7 +64,7 @@ def create_test_user():
         db.add(User(
             id=1,   # ✅ fix id ให้ตรงกับ test
             username="testuser",
-            hashed_password="fakehashedpw",
+            hashed_password="test_value",
             name="Test User",
             student_id="6510110575",
             faculty="Engineering",
