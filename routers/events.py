@@ -8,6 +8,8 @@ from schemas.events import Event, EventCreate
 
 router = APIRouter()
 
+EVENT_NOT_FOUND = "Event not found"
+
 @router.post("/events/", response_model=Event)
 def create_event(event: EventCreate, db: Session = Depends(get_db)):
     # เช็ค user_id ว่ามีจริงในตาราง User (ถ้าไม่ต้องการเช็ค สามารถลบบรรทัดนี้ได้)
@@ -39,14 +41,14 @@ def read_events(
 def read_event(event_id: int, user_id: str, db: Session = Depends(get_db)):
     event = db.query(EventModel).filter(EventModel.id == event_id, EventModel.user_id == user_id).first()
     if event is None:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(status_code=404, detail=EVENT_NOT_FOUND)
     return event
 
 @router.put("/events/{event_id}", response_model=Event)
 def update_event(event_id: int, event: EventCreate, db: Session = Depends(get_db)):
     db_event = db.query(EventModel).filter(EventModel.id == event_id, EventModel.user_id == event.user_id).first()
     if db_event is None:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(status_code=404, detail=EVENT_NOT_FOUND)
     db_event.title = event.title
     db_event.description = event.description
     db_event.start_time = event.start_time
@@ -59,7 +61,7 @@ def update_event(event_id: int, event: EventCreate, db: Session = Depends(get_db
 def delete_event(event_id: int, user_id: str, db: Session = Depends(get_db)):
     db_event = db.query(EventModel).filter(EventModel.id == event_id, EventModel.user_id == user_id).first()
     if db_event is None:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(status_code=404, detail=EVENT_NOT_FOUND)
     db.delete(db_event)
     db.commit()
     return {"message": "Event deleted"}
