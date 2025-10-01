@@ -22,7 +22,7 @@ def test_read_event_not_found(client):
 
 
 def test_update_event_not_found(client):
-    response = client.put("/events/999", json={
+    response = client.put("/events/999?user_id=1", json={  # เพิ่ม ?user_id=1
         "user_id": 1,  # ✅ int
         "title": "Updated Event",
         "description": "Updated Description",
