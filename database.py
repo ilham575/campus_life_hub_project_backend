@@ -7,19 +7,19 @@ from dotenv import load_dotenv
 # โหลดค่าจาก .env
 load_dotenv()
 
-# SQLite URL
-SQLITE_DATABASE_URL = "sqlite:///:memory:"   # ใช้ in-memory DB เร็วและไม่ต้องสร้างไฟล์
+# SQLite (ใช้ใน test)
+SQLITE_DATABASE_URL = "sqlite:///:memory:"
 
-# PostgreSQL URL (อ่านจาก .env)
+# PostgreSQL (production)
 POSTGRESQL_DATABASE_URL = os.getenv("POSTGRESQL_DATABASE_URL")
 
-# เลือก DATABASE_URL ตามสภาพแวดล้อม
+# Switch ตาม env
 if os.getenv("RUN_TEST") == "1":
     DATABASE_URL = SQLITE_DATABASE_URL
 else:
     DATABASE_URL = POSTGRESQL_DATABASE_URL
 
-# Create the database engine
+# Engine
 engine = create_engine(
     DATABASE_URL,
     connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
